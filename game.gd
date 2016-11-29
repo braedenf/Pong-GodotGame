@@ -6,7 +6,7 @@ var pad_size
 var direction = Vector2(1.0, 0.0)
 
 #Constant for pad speed
-const INITIAL_BALL_SPEED = 80
+const INITIAL_BALL_SPEED = 120
 #Speed of the ball
 var ball_speed = INITIAL_BALL_SPEED
 #Constant for pad speed
@@ -16,6 +16,10 @@ func _process(delta):
 	var ball_pos = get_node("ball").get_pos()
 	var left_rect = Rect2(get_node("left").get_pos() - pad_size*0.5, pad_size)
 	var right_rect = Rect2(get_node("right").get_pos() - pad_size*0.5, pad_size)
+	#move left pad
+	var left_pos = get_node("left").get_pos()
+	#move right pad
+	var right_pos = get_node("right").get_pos()
 	
 	#intergrate new ball position
 	ball_pos += direction * ball_speed * delta
@@ -34,9 +38,26 @@ func _process(delta):
 		ball_pos = screen_size*0.5
 		ball_speed = INITIAL_BALL_SPEED
 		direction = Vector2(-1, 0)
+		
+	get_node("ball").set_pos(ball_pos)
+	#Left pad move
+	if(left_pos.y > 0 and Input.is_action_pressed("left_move_up")):
+		left_pos.y += -PAD_SPEED * delta
+	if(left_pos.y < screen_size.y and Input.is_action_pressed("left_move_down")):
+		left_pos.y += PAD_SPEED * delta
+	
+	get_node("left").set_pos(left_pos)
+	
+	#Right pad move
+	if(right_pos.y > 0 and Input.is_action_pressed("right_move_up")):
+		right_pos.y += -PAD_SPEED * delta
+	if(right_pos.y < screen_size.y and Input.is_action_pressed("right_move_down")):
+		right_pos.y += PAD_SPEED * delta
+		
+	get_node("right").set_pos(right_pos)
 
 func _ready():
-	screen_size = get_viewport_rect().size()
+	screen_size = get_viewport_rect().size
 	pad_size = get_node("left").get_texture().get_size()
 	set_process(true)
 	
